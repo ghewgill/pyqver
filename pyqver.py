@@ -82,6 +82,7 @@ StandardModules = {
 Functions = {
     "enumerate":    (2, 3),
     "frozenset":    (2, 4),
+    "reversed":     (2, 4),
     "set":          (2, 4),
     "sum":          (2, 3),
 }
