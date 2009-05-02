@@ -12,6 +12,7 @@ StandardModules = {
     "collections":      (2, 4),
     "contextlib":       (2, 5),
     "cookielib":        (2, 4),
+    "cProfile":         (2, 5),
     "csv":              (2, 3),
     "ctypes":           (2, 5),
     "datetime":         (2, 3),
@@ -50,7 +51,7 @@ StandardModules = {
     "shlex":            (1, 5, 2),
     "SimpleXMLRPCServer": (2, 2),
     "spwd":             (2, 5),
-    "sqlite3":          (2, 3),
+    "sqlite3":          (2, 5),
     "ssl":              (2, 6),
     "stringprep":       (2, 3),
     "subprocess":       (2, 4),
@@ -80,6 +81,8 @@ StandardModules = {
 }
 
 Functions = {
+    "all":          (2, 5),
+    "any":          (2, 5),
     "enumerate":    (2, 3),
     "frozenset":    (2, 4),
     "reversed":     (2, 4),
