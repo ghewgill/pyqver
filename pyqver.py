@@ -80,6 +80,9 @@ class NodeChecker(object):
     def __init__(self):
         self.vers = collections.defaultdict(list)
         self.vers[(2,0)].append(None)
+    def visitClass(self, node):
+        if node.bases:
+            self.vers[(2,2)].append(node)
     def visitGenExpr(self, node):
         self.vers[(2,4)].append(node)
     def visitImport(self, node):
@@ -93,6 +96,8 @@ def qver(source):
 
     >>> qver('print "hello world"')
     (2, 0)
+    >>> qver('class test(object): pass')
+    (2, 2)
     >>> qver('import hashlib')
     (2, 5)
     >>> qver('import xml.etree.ElementTree')
