@@ -132,6 +132,12 @@ class NodeChecker(object):
         if v is not None:
             self.vers[v].append(node)
         self.default(node)
+    def visitTryFinally(self, node):
+        # try/finally with a suite generates a Stmt node as the body,
+        # but try/except/finally generates a TryExcept as the body
+        if isinstance(node.body, compiler.ast.TryExcept):
+            self.vers[(2,5)].append(node)
+        self.default(node)
     def visitYield(self, node):
         self.vers[(2,2)].append(node)
         self.default(node)
@@ -164,6 +170,10 @@ def qver(source):
     >>> qver('import hashlib')
     (2, 5)
     >>> qver('import xml.etree.ElementTree')
+    (2, 5)
+    >>> qver('try:\\n try: pass;\\n except: pass;\\nfinally: pass')
+    (2, 0)
+    >>> qver('try: pass;\\nexcept: pass;\\nfinally: pass')
     (2, 5)
     """
     tree = compiler.parse(source)
