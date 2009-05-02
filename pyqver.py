@@ -9,6 +9,8 @@ class NodeChecker(object):
     def __init__(self):
         self.vers = collections.defaultdict(list)
         self.vers[(2,0)].append(None)
+    def visitGenExpr(self, node):
+        self.vers[(2,4)].append(node)
     def visitImport(self, node):
         for n in node.names:
             v = StandardModules.get(n[0])
@@ -22,6 +24,8 @@ def qver(source):
     (2, 0)
     >>> qver('import hashlib')
     (2, 5)
+    >>> qver('print ",".join(x*x for x in range(5))')
+    (2, 4)
     """
     tree = compiler.parse(source)
     checker = NodeChecker()
