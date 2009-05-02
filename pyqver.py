@@ -18,6 +18,8 @@ StandardModules = {
     "decimal":          (2, 4),
     "difflib":          (2, 1),
     "DocXMLRPCServer":  (2, 3),
+    "dummy_thread":     (2, 3),
+    "dummy_threading":  (2, 3),
     "email":            (2, 2),
     "fractions":        (2, 6),
     "functools":        (2, 5),
