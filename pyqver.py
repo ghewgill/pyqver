@@ -76,6 +76,10 @@ StandardModules = {
     "_winreg":          (2, 0),
 }
 
+Identifiers = {
+    "enumerate": (2, 3),
+}
+
 class NodeChecker(object):
     def __init__(self):
         self.vers = collections.defaultdict(list)
@@ -92,6 +96,10 @@ class NodeChecker(object):
             v = StandardModules.get(n[0])
             if v is not None:
                 self.vers[v].append(n)
+    def visitName(self, node):
+        v = Identifiers.get(node.name)
+        if v is not None:
+            self.vers[v].append(node)
     def visitYield(self, node):
         self.vers[(2,2)].append(node)
 
@@ -106,6 +114,8 @@ def qver(source):
     (2, 2)
     >>> qver('a // b')
     (2, 2)
+    >>> qver('enumerate(a)')
+    (2, 3)
     >>> qver('import hashlib')
     (2, 5)
     >>> qver('import xml.etree.ElementTree')
