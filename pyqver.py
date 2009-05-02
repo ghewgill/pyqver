@@ -118,6 +118,9 @@ class NodeChecker(object):
     def visitGenExpr(self, node):
         self.vers[(2,4)].append(node)
         self.default(node)
+    def visitIfExp(self, node):
+        self.vers[(2,5)].append(node)
+        self.default(node)
     def visitImport(self, node):
         for n in node.names:
             v = StandardModules.get(n[0])
@@ -156,6 +159,8 @@ def qver(source):
     (2, 4)
     >>> qver('class C:\\n @classmethod\\n def m(): pass')
     (2, 4)
+    >>> qver('y if x else z')
+    (2, 5)
     >>> qver('import hashlib')
     (2, 5)
     >>> qver('import xml.etree.ElementTree')
