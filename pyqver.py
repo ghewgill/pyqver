@@ -77,7 +77,9 @@ StandardModules = {
 }
 
 Identifiers = {
-    "enumerate": (2, 3),
+    "enumerate":    (2, 3),
+    "False":        (2, 2),
+    "True":         (2, 2),
 }
 
 class NodeChecker(object):
@@ -113,6 +115,8 @@ def qver(source):
     >>> qver('yield 1')
     (2, 2)
     >>> qver('a // b')
+    (2, 2)
+    >>> qver('True')
     (2, 2)
     >>> qver('enumerate(a)')
     (2, 3)
