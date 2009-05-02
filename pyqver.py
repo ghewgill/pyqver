@@ -108,6 +108,9 @@ class NodeChecker(object):
         if node.bases:
             self.vers[(2,2)].append(node)
         self.default(node)
+    def visitDecorators(self, node):
+        self.vers[(2,4)].append(node)
+        self.default(node)
     def visitFloorDiv(self, node):
         self.vers[(2,2)].append(node)
         self.default(node)
@@ -149,6 +152,8 @@ def qver(source):
     >>> qver('sum(a)')
     (2, 3)
     >>> qver('(x*x for x in range(5))')
+    (2, 4)
+    >>> qver('class C:\\n @classmethod\\n def m(): pass')
     (2, 4)
     >>> qver('import hashlib')
     (2, 5)
