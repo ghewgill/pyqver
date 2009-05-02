@@ -90,6 +90,8 @@ class NodeChecker(object):
             v = StandardModules.get(n[0])
             if v is not None:
                 self.vers[v].append(n)
+    def visitYield(self, node):
+        self.vers[(2,2)].append(node)
 
 def qver(source):
     """Return the minimum Python version required to run a particular bit of code.
@@ -97,6 +99,8 @@ def qver(source):
     >>> qver('print "hello world"')
     (2, 0)
     >>> qver('class test(object): pass')
+    (2, 2)
+    >>> qver('yield 1')
     (2, 2)
     >>> qver('import hashlib')
     (2, 5)
