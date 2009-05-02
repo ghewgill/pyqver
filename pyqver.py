@@ -83,6 +83,8 @@ class NodeChecker(object):
     def visitClass(self, node):
         if node.bases:
             self.vers[(2,2)].append(node)
+    def visitFloorDiv(self, node):
+        self.vers[(2,2)].append(node)
     def visitGenExpr(self, node):
         self.vers[(2,4)].append(node)
     def visitImport(self, node):
@@ -101,6 +103,8 @@ def qver(source):
     >>> qver('class test(object): pass')
     (2, 2)
     >>> qver('yield 1')
+    (2, 2)
+    >>> qver('a // b')
     (2, 2)
     >>> qver('import hashlib')
     (2, 5)
