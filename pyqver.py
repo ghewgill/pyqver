@@ -1,5 +1,6 @@
 import collections
 import compiler
+import sys
 
 StandardModules = {
     "__future__":       (2, 1),
@@ -76,8 +77,12 @@ StandardModules = {
     "_winreg":          (2, 0),
 }
 
-Identifiers = {
+Functions = {
     "enumerate":    (2, 3),
+    "sum":          (2, 3),
+}
+
+Identifiers = {
     "False":        (2, 2),
     "True":         (2, 2),
 }
@@ -86,24 +91,39 @@ class NodeChecker(object):
     def __init__(self):
         self.vers = collections.defaultdict(list)
         self.vers[(2,0)].append(None)
+    def default(self, node):
+        for child in node.getChildNodes():
+            self.visit(child)
+    def visitCallFunc(self, node):
+        if isinstance(node.node, compiler.ast.Name):
+            v = Functions.get(node.node.name)
+            if v is not None:
+                self.vers[v].append(node)
+        self.default(node)
     def visitClass(self, node):
         if node.bases:
             self.vers[(2,2)].append(node)
+        self.default(node)
     def visitFloorDiv(self, node):
         self.vers[(2,2)].append(node)
+        self.default(node)
     def visitGenExpr(self, node):
         self.vers[(2,4)].append(node)
+        self.default(node)
     def visitImport(self, node):
         for n in node.names:
             v = StandardModules.get(n[0])
             if v is not None:
                 self.vers[v].append(n)
+        self.default(node)
     def visitName(self, node):
         v = Identifiers.get(node.name)
         if v is not None:
             self.vers[v].append(node)
+        self.default(node)
     def visitYield(self, node):
         self.vers[(2,2)].append(node)
+        self.default(node)
 
 def qver(source):
     """Return the minimum Python version required to run a particular bit of code.
@@ -120,6 +140,10 @@ def qver(source):
     (2, 2)
     >>> qver('enumerate(a)')
     (2, 3)
+    >>> qver('total = sum')
+    (2, 0)
+    >>> qver('sum(a)')
+    (2, 3)
     >>> qver('import hashlib')
     (2, 5)
     >>> qver('import xml.etree.ElementTree')
@@ -128,8 +152,7 @@ def qver(source):
     (2, 4)
     """
     tree = compiler.parse(source)
-    checker = NodeChecker()
-    compiler.walk(tree, checker)
+    checker = compiler.walk(tree, NodeChecker())
     return max(checker.vers.keys())
 
 if __name__ == "__main__":
