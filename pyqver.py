@@ -138,6 +138,9 @@ class NodeChecker(object):
         if isinstance(node.body, compiler.ast.TryExcept):
             self.vers[(2,5)].append(node)
         self.default(node)
+    def visitWith(self, node):
+        self.vers[(2,5)].append(node)
+        self.default(node)
     def visitYield(self, node):
         self.vers[(2,2)].append(node)
         self.default(node)
@@ -174,6 +177,8 @@ def qver(source):
     >>> qver('try:\\n try: pass;\\n except: pass;\\nfinally: pass')
     (2, 0)
     >>> qver('try: pass;\\nexcept: pass;\\nfinally: pass')
+    (2, 5)
+    >>> qver('from __future__ import with_statement\\nwith x: pass')
     (2, 5)
     """
     tree = compiler.parse(source)
