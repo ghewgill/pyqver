@@ -184,6 +184,11 @@ def qver(source):
     (2, 5)
     >>> qver('from __future__ import with_statement\\nwith x: pass')
     (2, 5)
+
+    #>>> qver('0o0')
+    #(2, 6)
+    #>>> qver('@foo\\nclass C: pass')
+    #(2, 6)
     """
     tree = compiler.parse(source)
     checker = compiler.walk(tree, NodeChecker())
