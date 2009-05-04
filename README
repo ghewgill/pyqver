@@ -1,0 +1,58 @@
+pyqver - query required Python version
+http://hewgill.com
+
+INTRODUCTION
+
+This script attempts to identify the minimum version of Python that is required
+to execute a particular source file.
+
+When developing Python scripts for distribution, it is desirable to identify
+which minimum version of the Python interpreter is required. pyqver attempts to
+answer this question using a simplistic analysis of the output of the Python
+compiler.
+
+When run without the -v argument, sources are listed along with the minimum
+version of Python required. When run with the -v option, each version is listed
+along with the reasons why that version is required. For example, for the
+pyqver.py script itself:
+
+pyqver.py
+        2.5     collections.defaultdict
+        2.4     collections
+
+This means that pyqver.py uses the 'collections' module, which is a 2.4
+feature. In addition, it uses the 'collections.defaultdict' function, which is
+a 2.5 feature.
+
+REQUIREMENTS
+
+This script requires at least Python 2.5.
+
+USAGE
+
+Usage: pyqver.py [options] source ...
+
+    Report minimum Python version required to run given source files.
+
+    -m x.y or --min-version x.y (default 2.3)
+        report version triggers at or above version x.y in verbose mode
+    -v or --verbose
+        print more detailed report of version triggers for each version
+
+BUGS
+
+There are currently a few features which are not detected. For example, the 2.6
+syntax
+
+    try:
+        # ...
+    except Exception as x:
+        # ...
+
+is not detected because the output of the 'compiler' module is the same for
+both the old and the new syntax.
+
+The TODO file has a few notes of things to do.
+
+The 'compiler' module on which pyqver depends has been removed in Python 3.
+When porting, a rewrite will be required.
