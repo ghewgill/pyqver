@@ -116,46 +116,46 @@ class NodeChecker(object):
         if name:
             v = Functions.get(name)
             if v is not None:
-                self.vers[v].append(node)
+                self.vers[v].append(name)
         self.default(node)
     def visitClass(self, node):
         if node.bases:
-            self.vers[(2,2)].append(node)
+            self.vers[(2,2)].append("new-style class")
         self.default(node)
     def visitDecorators(self, node):
-        self.vers[(2,4)].append(node)
+        self.vers[(2,4)].append("decorator")
         self.default(node)
     def visitFloorDiv(self, node):
-        self.vers[(2,2)].append(node)
+        self.vers[(2,2)].append("// operator")
         self.default(node)
     def visitGenExpr(self, node):
-        self.vers[(2,4)].append(node)
+        self.vers[(2,4)].append("generator expression")
         self.default(node)
     def visitIfExp(self, node):
-        self.vers[(2,5)].append(node)
+        self.vers[(2,5)].append("inline if expression")
         self.default(node)
     def visitImport(self, node):
         for n in node.names:
             v = StandardModules.get(n[0])
             if v is not None:
-                self.vers[v].append(n)
+                self.vers[v].append(n[0])
         self.default(node)
     def visitName(self, node):
         v = Identifiers.get(node.name)
         if v is not None:
-            self.vers[v].append(node)
+            self.vers[v].append(node.name)
         self.default(node)
     def visitTryFinally(self, node):
         # try/finally with a suite generates a Stmt node as the body,
         # but try/except/finally generates a TryExcept as the body
         if isinstance(node.body, compiler.ast.TryExcept):
-            self.vers[(2,5)].append(node)
+            self.vers[(2,5)].append("try/except/finally")
         self.default(node)
     def visitWith(self, node):
-        self.vers[(2,5)].append(node)
+        self.vers[(2,5)].append("with statement")
         self.default(node)
     def visitYield(self, node):
-        self.vers[(2,2)].append(node)
+        self.vers[(2,2)].append("yield expression")
         self.default(node)
 
 def qver(source):
