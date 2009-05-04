@@ -24,6 +24,9 @@ This means that pyqver.py uses the 'collections' module, which is a 2.4
 feature. In addition, it uses the 'collections.defaultdict' function, which is
 a 2.5 feature.
 
+This script was inspired by the following question on Stack Overflow:
+http://stackoverflow.com/questions/804538/tool-to-determine-what-lowest-version-of-python-required
+
 REQUIREMENTS
 
 This script requires at least Python 2.5.
