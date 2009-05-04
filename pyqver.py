@@ -81,14 +81,15 @@ StandardModules = {
 }
 
 Functions = {
-    "all":          (2, 5),
-    "any":          (2, 5),
-    "enumerate":    (2, 3),
-    "frozenset":    (2, 4),
-    "next":         (2, 6),
-    "reversed":     (2, 4),
-    "set":          (2, 4),
-    "sum":          (2, 3),
+    "all":                      (2, 5),
+    "any":                      (2, 5),
+    "collections.defaultdict":  (2, 5),
+    "enumerate":                (2, 3),
+    "frozenset":                (2, 4),
+    "next":                     (2, 6),
+    "reversed":                 (2, 4),
+    "set":                      (2, 4),
+    "sum":                      (2, 3),
 }
 
 Identifiers = {
@@ -104,8 +105,16 @@ class NodeChecker(object):
         for child in node.getChildNodes():
             self.visit(child)
     def visitCallFunc(self, node):
-        if isinstance(node.node, compiler.ast.Name):
-            v = Functions.get(node.node.name)
+        def rollup(n):
+            if isinstance(n, compiler.ast.Name):
+                return n.name
+            elif isinstance(n, compiler.ast.Getattr):
+                r = rollup(n.expr)
+                if r:
+                    return r + "." + n.attrname
+        name = rollup(node.node)
+        if name:
+            v = Functions.get(name)
             if v is not None:
                 self.vers[v].append(node)
         self.default(node)
@@ -183,6 +192,8 @@ def qver(source):
     >>> qver('try: pass;\\nexcept: pass;\\nfinally: pass')
     (2, 5)
     >>> qver('from __future__ import with_statement\\nwith x: pass')
+    (2, 5)
+    >>> qver('collections.defaultdict(list)')
     (2, 5)
 
     #>>> qver('0o0')
