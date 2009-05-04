@@ -97,6 +97,12 @@ Identifiers = {
     "True":         (2, 2),
 }
 
+def uniq(a):
+    if len(a) == 0:
+        return []
+    else:
+        return [a[0]] + uniq([x for x in a if x != a[0]])
+
 class NodeChecker(object):
     def __init__(self):
         self.vers = collections.defaultdict(list)
@@ -203,14 +209,53 @@ def qver(source):
     """
     tree = compiler.parse(source)
     checker = compiler.walk(tree, NodeChecker())
-    return max(checker.vers.keys())
+    return checker.vers
 
-for a in sys.argv[1:]:
+Verbose = False
+MinVersion = (2, 3)
+
+files = []
+i = 1
+while i < len(sys.argv):
+    a = sys.argv[i]
     if a == "--test":
         import doctest
         doctest.testmod()
         sys.exit(0)
-    f = open(a)
-    source = f.read()
-    f.close()
-    print "%s\t%s" % (".".join(map(str, qver(source))), a)
+    if a == "-v" or a == "--verbose":
+        Verbose = True
+    elif a == "-m" or a == "--min-version":
+        i += 1
+        MinVersion = tuple(map(int, sys.argv[i].split(".")))
+    else:
+        files.append(a)
+    i += 1
+
+if not files:
+    print >>sys.stderr, """Usage: %s [options] source ...
+
+    Report minimum Python version required to run given source files.
+
+    -m x.y or --min-version x.y (default 2.3)
+        report version triggers at or above version x.y in verbose mode
+    -v or --verbose
+        print more detailed report of version triggers for each version
+""" % sys.argv[0]
+    sys.exit(1)
+
+for fn in files:
+    try:
+        f = open(fn)
+        source = f.read()
+        f.close()
+        ver = qver(source)
+        if Verbose:
+            print fn
+            for v in sorted([k for k in ver.keys() if k >= MinVersion], reverse=True):
+                reasons = [x for x in uniq(ver[v]) if x]
+                if reasons:
+                    print "\t%s\t%s" % (".".join(map(str, v)), ", ".join(reasons))
+        else:
+            print "%s\t%s" % (".".join(map(str, max(ver.keys()))), fn)
+    except SyntaxError, x:
+        pass
