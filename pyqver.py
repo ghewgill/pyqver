@@ -194,6 +194,12 @@ def qver(source):
     checker = compiler.walk(tree, NodeChecker())
     return max(checker.vers.keys())
 
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod()
+for a in sys.argv[1:]:
+    if a == "--test":
+        import doctest
+        doctest.testmod()
+        sys.exit(0)
+    f = open(a)
+    source = f.read()
+    f.close()
+    print "%s\t%s" % (".".join(map(str, qver(source))), a)
