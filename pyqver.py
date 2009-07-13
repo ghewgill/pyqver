@@ -164,6 +164,17 @@ class NodeChecker(object):
         self.vers[(2,2)].append("yield expression")
         self.default(node)
 
+def get_versions(source):
+    """Return information about the Python versions required for specific features.
+
+    The return value is a dictionary with keys as a version number as a tuple
+    (for example Python 2.6 is (2,6)) and the value are a list of features that
+    require the indicated Python version.
+    """
+    tree = compiler.parse(source)
+    checker = compiler.walk(tree, NodeChecker())
+    return checker.vers
+
 def qver(source):
     """Return the minimum Python version required to run a particular bit of code.
 
@@ -207,9 +218,7 @@ def qver(source):
     #>>> qver('@foo\\nclass C: pass')
     #(2, 6)
     """
-    tree = compiler.parse(source)
-    checker = compiler.walk(tree, NodeChecker())
-    return checker.vers
+    return max(get_versions(source).keys())
 
 Verbose = False
 MinVersion = (2, 3)
@@ -248,7 +257,7 @@ for fn in files:
         f = open(fn)
         source = f.read()
         f.close()
-        ver = qver(source)
+        ver = get_versions(source)
         if Verbose:
             print fn
             for v in sorted([k for k in ver.keys() if k >= MinVersion], reverse=True):
