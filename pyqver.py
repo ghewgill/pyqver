@@ -159,6 +159,12 @@ class NodeChecker(object):
     def visitGenExpr(self, node):
         self.vers[(2,4)].append("generator expression")
         self.default(node)
+    def visitGetattr(self, node):
+        if (isinstance(node.expr, compiler.ast.Const)
+            and isinstance(node.expr.value, str)
+            and node.attrname == "format"):
+            self.vers[(2,6)].append("string literal .format()")
+        self.default(node)
     def visitIfExp(self, node):
         self.vers[(2,5)].append("inline if expression")
         self.default(node)
@@ -250,6 +256,8 @@ def qver(source):
     (2, 5)
     >>> qver('collections.defaultdict(list)')
     (2, 5)
+    >>> qver('"{0}".format(0)')
+    (2, 6)
     >>> qver('memoryview(x)')
     (2, 7)
     >>> v27('{1, 2, 3}')
