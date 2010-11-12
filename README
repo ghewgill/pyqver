@@ -14,15 +14,18 @@ compiler.
 When run without the -v argument, sources are listed along with the minimum
 version of Python required. When run with the -v option, each version is listed
 along with the reasons why that version is required. For example, for the
-pyqver.py script itself:
+pyqver2.py script itself:
 
-pyqver.py
+pyqver2.py
         2.5     collections.defaultdict
         2.4     collections
 
-This means that pyqver.py uses the 'collections' module, which is a 2.4
+This means that pyqver2.py uses the 'collections' module, which is a 2.4
 feature. In addition, it uses the 'collections.defaultdict' function, which is
 a 2.5 feature.
+
+The pyqver2.py script is specific to Python 2.x, and pyqver3.py is specific to
+Python 3.x.
 
 This script was inspired by the following question on Stack Overflow:
 http://stackoverflow.com/questions/804538/tool-to-determine-what-lowest-version-of-python-required
@@ -33,11 +36,11 @@ This script requires at least Python 2.5.
 
 USAGE
 
-Usage: pyqver.py [options] source ...
+Usage: pyqver[23].py [options] source ...
 
     Report minimum Python version required to run given source files.
 
-    -m x.y or --min-version x.y (default 2.3)
+    -m x.y or --min-version x.y (default M.N)
         report version triggers at or above version x.y in verbose mode
     -v or --verbose
         print more detailed report of version triggers for each version
@@ -56,6 +59,3 @@ is not detected because the output of the 'compiler' module is the same for
 both the old and the new syntax.
 
 The TODO file has a few notes of things to do.
-
-The 'compiler' module on which pyqver depends has been removed in Python 3.
-When porting, a rewrite will be required.
