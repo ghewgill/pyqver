@@ -5,6 +5,7 @@ import sys
 StandardModules = {
     "__future__":       (2, 1),
     "abc":              (2, 6),
+    "argparse":         (2, 7),
     "ast":              (2, 6),
     "atexit":           (2, 0),
     "bz2":              (2, 3),
@@ -30,6 +31,7 @@ StandardModules = {
     "hmac":             (2, 2),
     "hotshot":          (2, 2),
     "HTMLParser":       (2, 2),
+    "importlib":        (2, 7),
     "inspect":          (2, 1),
     "io":               (2, 6),
     "itertools":        (2, 3),
@@ -55,6 +57,7 @@ StandardModules = {
     "ssl":              (2, 6),
     "stringprep":       (2, 3),
     "subprocess":       (2, 4),
+    "sysconfig":        (2, 7),
     "tarfile":          (2, 3),
     "textwrap":         (2, 3),
     "timeit":           (2, 3),
@@ -83,13 +86,29 @@ StandardModules = {
 Functions = {
     "all":                      (2, 5),
     "any":                      (2, 5),
+    "collections.Counter":      (2, 7),
     "collections.defaultdict":  (2, 5),
+    "collections.OrderedDict":  (2, 7),
     "enumerate":                (2, 3),
     "frozenset":                (2, 4),
+    "itertools.compress":       (2, 7),
+    "math.erf":                 (2, 7),
+    "math.erfc":                (2, 7),
+    "math.expm1":               (2, 7),
+    "math.gamma":               (2, 7),
+    "math.lgamma":              (2, 7),
+    "memoryview":               (2, 7),
     "next":                     (2, 6),
+    "os.getresgid":             (2, 7),
+    "os.getresuid":             (2, 7),
+    "os.initgroups":            (2, 7),
+    "os.setresgid":             (2, 7),
+    "os.setresuid":             (2, 7),
     "reversed":                 (2, 4),
     "set":                      (2, 4),
     "sum":                      (2, 3),
+    "symtable.is_declared_global": (2, 7),
+    "weakref.WeakSet":          (2, 7),
 }
 
 Identifiers = {
@@ -131,6 +150,9 @@ class NodeChecker(object):
     def visitDecorators(self, node):
         self.vers[(2,4)].append("decorator")
         self.default(node)
+    def visitDictComp(self, node):
+        self.vers[(2,7)].append("dictionary comprehension")
+        self.default(node)
     def visitFloorDiv(self, node):
         self.vers[(2,2)].append("// operator")
         self.default(node)
@@ -151,6 +173,12 @@ class NodeChecker(object):
         if v is not None:
             self.vers[v].append(node.name)
         self.default(node)
+    def visitSet(self, node):
+        self.vers[(2,7)].append("set literal")
+        self.default(node)
+    def visitSetComp(self, node):
+        self.vers[(2,7)].append("set comprehension")
+        self.default(node)
     def visitTryFinally(self, node):
         # try/finally with a suite generates a Stmt node as the body,
         # but try/except/finally generates a TryExcept as the body
@@ -158,7 +186,10 @@ class NodeChecker(object):
             self.vers[(2,5)].append("try/except/finally")
         self.default(node)
     def visitWith(self, node):
-        self.vers[(2,5)].append("with statement")
+        if isinstance(node.body, compiler.ast.With):
+            self.vers[(2,7)].append("with statement with multiple contexts")
+        else:
+            self.vers[(2,5)].append("with statement")
         self.default(node)
     def visitYield(self, node):
         self.vers[(2,2)].append("yield expression")
@@ -174,6 +205,13 @@ def get_versions(source):
     tree = compiler.parse(source)
     checker = compiler.walk(tree, NodeChecker())
     return checker.vers
+
+def v27(source):
+    if sys.version_info >= (2, 7):
+        return qver(source)
+    else:
+        print >>sys.stderr, "Not all features tested, run --test with Python 2.7"
+        return (2, 7)
 
 def qver(source):
     """Return the minimum Python version required to run a particular bit of code.
@@ -212,6 +250,18 @@ def qver(source):
     (2, 5)
     >>> qver('collections.defaultdict(list)')
     (2, 5)
+    >>> qver('memoryview(x)')
+    (2, 7)
+    >>> v27('{1, 2, 3}')
+    (2, 7)
+    >>> v27('{x for x in s}')
+    (2, 7)
+    >>> v27('{x: y for x in s}')
+    (2, 7)
+    >>> qver('from __future__ import with_statement\\nwith x:\\n with y: pass')
+    (2, 5)
+    >>> v27('from __future__ import with_statement\\nwith x, y: pass')
+    (2, 7)
 
     #>>> qver('0o0')
     #(2, 6)
