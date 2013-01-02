@@ -61,6 +61,10 @@ class NodeChecker(ast.NodeVisitor):
             if v is not None:
                 self.vers[v].append(n.name)
         self.generic_visit(node)
+    def visit_ImportFrom(self, node):
+        v = StandardModules.get(node.module)
+        if v is not None:
+            self.vers[v].append(node.module)
 
 def get_versions(source):
     """Return information about the Python versions required for specific features.
@@ -80,6 +84,8 @@ def qver(source):
     >>> qver('print("hello world")')
     (3, 0)
     >>> qver("import importlib")
+    (3, 1)
+    >>> qver("from importlib import x")
     (3, 1)
     >>> qver("import tkinter.ttk")
     (3, 1)

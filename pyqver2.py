@@ -156,6 +156,10 @@ class NodeChecker(object):
     def visitFloorDiv(self, node):
         self.vers[(2,2)].append("// operator")
         self.default(node)
+    def visitFrom(self, node):
+        v = StandardModules.get(node.modname)
+        if v is not None:
+            self.vers[v].append(node.modname)
     def visitGenExpr(self, node):
         self.vers[(2,4)].append("generator expression")
         self.default(node)
@@ -245,6 +249,8 @@ def qver(source):
     >>> qver('y if x else z')
     (2, 5)
     >>> qver('import hashlib')
+    (2, 5)
+    >>> qver('from hashlib import md5')
     (2, 5)
     >>> qver('import xml.etree.ElementTree')
     (2, 5)
