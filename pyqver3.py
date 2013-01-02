@@ -65,6 +65,11 @@ class NodeChecker(ast.NodeVisitor):
         v = StandardModules.get(node.module)
         if v is not None:
             self.vers[v].append(node.module)
+        for n in node.names:
+            name = node.module + "." + n.name
+            v = Functions.get(name)
+            if v is not None:
+                self.vers[v].append(name)
 
 def get_versions(source):
     """Return information about the Python versions required for specific features.
@@ -88,6 +93,8 @@ def qver(source):
     >>> qver("from importlib import x")
     (3, 1)
     >>> qver("import tkinter.ttk")
+    (3, 1)
+    >>> qver("from collections import Counter")
     (3, 1)
     >>> qver("collections.OrderedDict()")
     (3, 1)

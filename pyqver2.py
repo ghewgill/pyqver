@@ -160,6 +160,11 @@ class NodeChecker(object):
         v = StandardModules.get(node.modname)
         if v is not None:
             self.vers[v].append(node.modname)
+        for n in node.names:
+            name = node.modname + "." + n[0]
+            v = Functions.get(name)
+            if v is not None:
+                self.vers[v].append(name)
     def visitGenExpr(self, node):
         self.vers[(2,4)].append("generator expression")
         self.default(node)
@@ -261,6 +266,8 @@ def qver(source):
     >>> qver('from __future__ import with_statement\\nwith x: pass')
     (2, 5)
     >>> qver('collections.defaultdict(list)')
+    (2, 5)
+    >>> qver('from collections import defaultdict')
     (2, 5)
     >>> qver('"{0}".format(0)')
     (2, 6)
