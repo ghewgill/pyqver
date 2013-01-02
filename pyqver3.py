@@ -4,21 +4,30 @@ import sys
 
 StandardModules = {
     "argparse":         (3, 2),
+    "faulthandler":     (3, 3),
     "importlib":        (3, 1),
+    "ipaddress":        (3, 3),
+    "lzma":             (3, 3),
     "tkinter.ttk":      (3, 1),
+    "unittest.mock":    (3, 3),
+    "venv":             (3, 3),
 }
 
 Functions = {
     "bytearray.maketrans":                      (3, 1),
     "bytes.maketrans":                          (3, 1),
+    "bz2.open":                                 (3, 3),
     "collections.Counter":                      (3, 1),
     "collections.OrderedDict":                  (3, 1),
+    "crypt.mksalt":                             (3, 3),
     "email.generator.BytesGenerator":           (3, 2),
     "email.message_from_binary_file":           (3, 2),
     "email.message_from_bytes":                 (3, 2),
     "functools.lru_cache":                      (3, 2),
     "gzip.compress":                            (3, 2),
     "gzip.decompress":                          (3, 2),
+    "inspect.getclosurevars":                   (3, 3),
+    "inspect.getgeneratorlocals":               (3, 3),
     "inspect.getgeneratorstate":                (3, 2),
     "itertools.combinations_with_replacement":  (3, 1),
     "itertools.compress":                       (3, 1),
@@ -30,18 +39,95 @@ Functions = {
     "math.gamma":                               (3, 2),
     "math.isfinite":                            (3, 2),
     "math.lgamma":                              (3, 2),
+    "math.log2":                                (3, 3),
     "os.environb":                              (3, 2),
     "os.fsdecode":                              (3, 2),
     "os.fsencode":                              (3, 2),
+    "os.fwalk":                                 (3, 3),
     "os.getenvb":                               (3, 2),
     "os.get_exec_path":                         (3, 2),
+    "os.getgrouplist":                          (3, 3),
+    "os.getpriority":                           (3, 3),
     "os.getresgid":                             (3, 2),
     "os.getresuid":                             (3, 2),
+    "os.get_terminal_size":                     (3, 3),
+    "os.getxattr":                              (3, 3),
     "os.initgroups":                            (3, 2),
+    "os.listxattr":                             (3, 3),
+    "os.lockf":                                 (3, 3),
+    "os.pipe2":                                 (3, 3),
+    "os.posix_fadvise":                         (3, 3),
+    "os.posix_fallocate":                       (3, 3),
+    "os.pread":                                 (3, 3),
+    "os.pwrite":                                (3, 3),
+    "os.readv":                                 (3, 3),
+    "os.removexattr":                           (3, 3),
+    "os.replace":                               (3, 3),
+    "os.sched_get_priority_max":                (3, 3),
+    "os.sched_get_priority_min":                (3, 3),
+    "os.sched_getaffinity":                     (3, 3),
+    "os.sched_getparam":                        (3, 3),
+    "os.sched_getscheduler":                    (3, 3),
+    "os.sched_rr_get_interval":                 (3, 3),
+    "os.sched_setaffinity":                     (3, 3),
+    "os.sched_setparam":                        (3, 3),
+    "os.sched_setscheduler":                    (3, 3),
+    "os.sched_yield":                           (3, 3),
+    "os.sendfile":                              (3, 3),
+    "os.setpriority":                           (3, 3),
     "os.setresgid":                             (3, 2),
     "os.setresuid":                             (3, 2),
+    "os.setxattr":                              (3, 3),
+    "os.sync":                                  (3, 3),
+    "os.truncate":                              (3, 3),
+    "os.waitid":                                (3, 3),
+    "os.writev":                                (3, 3),
+    "shutil.chown":                             (3, 3),
+    "shutil.disk_usage":                        (3, 3),
+    "shutil.get_archive_formats":               (3, 3),
+    "shutil.get_terminal_size":                 (3, 3),
+    "shutil.get_unpack_formats":                (3, 3),
+    "shutil.make_archive":                      (3, 3),
+    "shutil.register_archive_format":           (3, 3),
+    "shutil.register_unpack_format":            (3, 3),
+    "shutil.unpack_archive":                    (3, 3),
+    "shutil.unregister_archive_format":         (3, 3),
+    "shutil.unregister_unpack_format":          (3, 3),
+    "shutil.which":                             (3, 3),
+    "signal.pthread_kill":                      (3, 3),
+    "signal.pthread_sigmask":                   (3, 3),
+    "signal.sigpending":                        (3, 3),
+    "signal.sigtimedwait":                      (3, 3),
+    "signal.sigwait":                           (3, 3),
+    "signal.sigwaitinfo":                       (3, 3),
+    "socket.CMSG_LEN":                          (3, 3),
+    "socket.CMSG_SPACE":                        (3, 3),
+    "socket.fromshare":                         (3, 3),
+    "socket.if_indextoname":                    (3, 3),
+    "socket.if_nameindex":                      (3, 3),
+    "socket.if_nametoindex":                    (3, 3),
+    "socket.sethostname":                       (3, 3),
     "ssl.match_hostname":                       (3, 2),
+    "ssl.RAND_bytes":                           (3, 3),
+    "ssl.RAND_pseudo_bytes":                    (3, 3),
     "ssl.SSLContext":                           (3, 2),
+    "ssl.SSLEOFError":                          (3, 3),
+    "ssl.SSLSyscallError":                      (3, 3),
+    "ssl.SSLWantReadError":                     (3, 3),
+    "ssl.SSLWantWriteError":                    (3, 3),
+    "ssl.SSLZeroReturnError":                   (3, 3),
+    "stat.filemode":                            (3, 3),
+    "textwrap.indent":                          (3, 3),
+    "threading.get_ident":                      (3, 3),
+    "time.clock_getres":                        (3, 3),
+    "time.clock_gettime":                       (3, 3),
+    "time.clock_settime":                       (3, 3),
+    "time.get_clock_info":                      (3, 3),
+    "time.monotonic":                           (3, 3),
+    "time.perf_counter":                        (3, 3),
+    "time.process_time":                        (3, 3),
+    "types.new_class":                          (3, 3),
+    "types.prepare_class":                      (3, 3),
 }
 
 def uniq(a):
@@ -83,6 +169,11 @@ class NodeChecker(ast.NodeVisitor):
             v = Functions.get(name)
             if v is not None:
                 self.vers[v].append(name)
+    def visit_Raise(self, node):
+        if isinstance(node.cause, ast.Name) and node.cause.id == "None":
+            self.vers[(3,3)].append("raise ... from None")
+    def visit_YieldFrom(self, node):
+        self.vers[(3,3)].append("yield from")
 
 def get_versions(source):
     """Return information about the Python versions required for specific features.
@@ -95,6 +186,13 @@ def get_versions(source):
     checker = NodeChecker()
     checker.visit(tree)
     return checker.vers
+
+def v33(source):
+    if sys.version_info >= (3, 3):
+        return qver(source)
+    else:
+        print("Not all features tested, run --test with Python 3.3", file=sys.stderr)
+        return (3, 3)
 
 def qver(source):
     """Return the minimum Python version required to run a particular bit of code.
@@ -113,6 +211,10 @@ def qver(source):
     (3, 1)
     >>> qver("import functools\\n@functools.lru_cache()\\ndef f(x): x*x")
     (3, 2)
+    >>> v33("yield from x")
+    (3, 3)
+    >>> v33("raise x from None")
+    (3, 3)
     """
     return max(get_versions(source).keys())
 
