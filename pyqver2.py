@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import collections
 import compiler
 import sys
 
@@ -126,8 +125,12 @@ def uniq(a):
 
 class NodeChecker(object):
     def __init__(self):
-        self.vers = collections.defaultdict(list)
-        self.vers[(2,0)].append(None)
+        self.vers = dict()
+        self.vers[(2,0)] = []
+    def add(self, node, ver, msg):
+        if ver not in self.vers:
+            self.vers[ver] = []
+        self.vers[ver].append(msg)
     def default(self, node):
         for child in node.getChildNodes():
             self.visit(child)
@@ -143,73 +146,73 @@ class NodeChecker(object):
         if name:
             v = Functions.get(name)
             if v is not None:
-                self.vers[v].append(name)
+                self.add(node, v, name)
         self.default(node)
     def visitClass(self, node):
         if node.bases:
-            self.vers[(2,2)].append("new-style class")
+            self.add(node, (2,2), "new-style class")
         self.default(node)
     def visitDecorators(self, node):
-        self.vers[(2,4)].append("decorator")
+        self.add(node, (2,4), "decorator")
         self.default(node)
     def visitDictComp(self, node):
-        self.vers[(2,7)].append("dictionary comprehension")
+        self.add(node, (2,7), "dictionary comprehension")
         self.default(node)
     def visitFloorDiv(self, node):
-        self.vers[(2,2)].append("// operator")
+        self.add(node, (2,2), "// operator")
         self.default(node)
     def visitFrom(self, node):
         v = StandardModules.get(node.modname)
         if v is not None:
-            self.vers[v].append(node.modname)
+            self.add(node, v, node.modname)
         for n in node.names:
             name = node.modname + "." + n[0]
             v = Functions.get(name)
             if v is not None:
-                self.vers[v].append(name)
+                self.add(node, v, name)
     def visitGenExpr(self, node):
-        self.vers[(2,4)].append("generator expression")
+        self.add(node, (2,4), "generator expression")
         self.default(node)
     def visitGetattr(self, node):
         if (isinstance(node.expr, compiler.ast.Const)
             and isinstance(node.expr.value, str)
             and node.attrname == "format"):
-            self.vers[(2,6)].append("string literal .format()")
+            self.add(node, (2,6), "string literal .format()")
         self.default(node)
     def visitIfExp(self, node):
-        self.vers[(2,5)].append("inline if expression")
+        self.add(node, (2,5), "inline if expression")
         self.default(node)
     def visitImport(self, node):
         for n in node.names:
             v = StandardModules.get(n[0])
             if v is not None:
-                self.vers[v].append(n[0])
+                self.add(node, v, n[0])
         self.default(node)
     def visitName(self, node):
         v = Identifiers.get(node.name)
         if v is not None:
-            self.vers[v].append(node.name)
+            self.add(node, v, node.name)
         self.default(node)
     def visitSet(self, node):
-        self.vers[(2,7)].append("set literal")
+        self.add(node, (2,7), "set literal")
         self.default(node)
     def visitSetComp(self, node):
-        self.vers[(2,7)].append("set comprehension")
+        self.add(node, (2,7), "set comprehension")
         self.default(node)
     def visitTryFinally(self, node):
         # try/finally with a suite generates a Stmt node as the body,
         # but try/except/finally generates a TryExcept as the body
         if isinstance(node.body, compiler.ast.TryExcept):
-            self.vers[(2,5)].append("try/except/finally")
+            self.add(node, (2,5), "try/except/finally")
         self.default(node)
     def visitWith(self, node):
         if isinstance(node.body, compiler.ast.With):
-            self.vers[(2,7)].append("with statement with multiple contexts")
+            self.add(node, (2,7), "with statement with multiple contexts")
         else:
-            self.vers[(2,5)].append("with statement")
+            self.add(node, (2,5), "with statement")
         self.default(node)
     def visitYield(self, node):
-        self.vers[(2,2)].append("yield expression")
+        self.add(node, (2,2), "yield expression")
         self.default(node)
 
 def get_versions(source):

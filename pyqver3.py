@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import ast
-import collections
 import sys
 
 StandardModules = {
@@ -140,8 +139,12 @@ def uniq(a):
 
 class NodeChecker(ast.NodeVisitor):
     def __init__(self):
-        self.vers = collections.defaultdict(list)
-        self.vers[(3,0)].append(None)
+        self.vers = dict()
+        self.vers[(3,0)] = []
+    def add(self, node, ver, msg):
+        if ver not in self.vers:
+            self.vers[ver] = []
+        self.vers[ver].append(msg)
     def visit_Call(self, node):
         def rollup(n):
             if isinstance(n, ast.Name):
@@ -154,28 +157,28 @@ class NodeChecker(ast.NodeVisitor):
         if name:
             v = Functions.get(name)
             if v is not None:
-                self.vers[v].append(name)
+                self.add(node, v, name)
         self.generic_visit(node)
     def visit_Import(self, node):
         for n in node.names:
             v = StandardModules.get(n.name)
             if v is not None:
-                self.vers[v].append(n.name)
+                self.add(node, v, n.name)
         self.generic_visit(node)
     def visit_ImportFrom(self, node):
         v = StandardModules.get(node.module)
         if v is not None:
-            self.vers[v].append(node.module)
+            self.add(node, v, node.module)
         for n in node.names:
             name = node.module + "." + n.name
             v = Functions.get(name)
             if v is not None:
-                self.vers[v].append(name)
+                self.add(node, v, name)
     def visit_Raise(self, node):
         if isinstance(node.cause, ast.Name) and node.cause.id == "None":
-            self.vers[(3,3)].append("raise ... from None")
+            self.add(node, (3,3), "raise ... from None")
     def visit_YieldFrom(self, node):
-        self.vers[(3,3)].append("yield from")
+        self.add(node, (3,3), "yield from")
 
 def get_versions(source):
     """Return information about the Python versions required for specific features.
