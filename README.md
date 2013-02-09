@@ -46,6 +46,8 @@ This script requires at least Python 2.2.
 
         -m x.y or --min-version x.y (default M.N)
             report version triggers at or above version x.y in verbose mode
+        -l or --lint
+            print a lint style report showing each offending line
         -v or --verbose
             print more detailed report of version triggers for each version
 

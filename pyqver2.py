@@ -130,7 +130,7 @@ class NodeChecker(object):
     def add(self, node, ver, msg):
         if ver not in self.vers:
             self.vers[ver] = []
-        self.vers[ver].append(msg)
+        self.vers[ver].append((node.lineno, msg))
     def default(self, node):
         for child in node.getChildNodes():
             self.visit(child)
@@ -298,6 +298,7 @@ def qver(source):
 
 Verbose = False
 MinVersion = (2, 3)
+Lint = False
 
 files = []
 i = 1
@@ -309,6 +310,8 @@ while i < len(sys.argv):
         sys.exit(0)
     if a == "-v" or a == "--verbose":
         Verbose = True
+    elif a == "-l" or a == "--lint":
+        Lint = True
     elif a == "-m" or a == "--min-version":
         i += 1
         MinVersion = tuple(map(int, sys.argv[i].split(".")))
@@ -339,7 +342,14 @@ for fn in files:
             for v in sorted([k for k in ver.keys() if k >= MinVersion], reverse=True):
                 reasons = [x for x in uniq(ver[v]) if x]
                 if reasons:
-                    print "\t%s\t%s" % (".".join(map(str, v)), ", ".join(reasons))
+                    # each reason is (lineno, message)
+                    print "\t%s\t%s" % (".".join(map(str, v)), ", ".join([x[1] for x in reasons]))
+        elif Lint:
+            for v in sorted([k for k in ver.keys() if k >= MinVersion], reverse=True):
+                reasons = [x for x in uniq(ver[v]) if x]
+                for r in reasons:
+                    # each reason is (lineno, message)
+                    print "%s:%s: %s %s" % (fn, r[0], ".".join(map(str, v)), r[1])
         else:
             print "%s\t%s" % (".".join(map(str, max(ver.keys()))), fn)
     except SyntaxError, x:
