@@ -151,9 +151,8 @@ class NodeChecker(object):
     def visitClass(self, node):
         if node.bases:
             self.add(node, (2,2), "new-style class")
-        self.default(node)
-    def visitDecorators(self, node):
-        self.add(node, (2,4), "decorator")
+        if node.decorators:
+            self.add(node, (2,6), "class decorator")
         self.default(node)
     def visitDictComp(self, node):
         self.add(node, (2,7), "dictionary comprehension")
@@ -170,6 +169,10 @@ class NodeChecker(object):
             v = Functions.get(name)
             if v is not None:
                 self.add(node, v, name)
+    def visitFunction(self, node):
+        if node.decorators:
+            self.add(node, (2,4), "function decorator")
+        self.default(node)
     def visitGenExpr(self, node):
         self.add(node, (2,4), "generator expression")
         self.default(node)
@@ -288,6 +291,10 @@ def qver(source):
     (2, 5)
     >>> v27('from __future__ import with_statement\\nwith x, y: pass')
     (2, 7)
+    >>> qver('@decorator\\ndef f(): pass')
+    (2, 4)
+    >>> qver('@decorator\\nclass test:\\n pass')
+    (2, 6)
 
     #>>> qver('0o0')
     #(2, 6)

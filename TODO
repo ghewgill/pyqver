@@ -1,2 +1,1 @@
 - identify syntax changes, eg. "except Exception as x:" or "f(a, *b, k=c)" (2.6)
-- recognise decorators on classes (2.6)
