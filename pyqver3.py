@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import ast
+import platform
 import sys
 
 StandardModules = {
@@ -180,14 +181,14 @@ class NodeChecker(ast.NodeVisitor):
     def visit_YieldFrom(self, node):
         self.add(node, (3,3), "yield from")
 
-def get_versions(source):
+def get_versions(source, filename=None):
     """Return information about the Python versions required for specific features.
 
     The return value is a dictionary with keys as a version number as a tuple
     (for example Python 3.1 is (3,1)) and the value are a list of features that
     require the indicated Python version.
     """
-    tree = ast.parse(source)
+    tree = ast.parse(source, filename=filename)
     checker = NodeChecker()
     checker.visit(tree)
     return checker.vers
@@ -263,7 +264,7 @@ for fn in files:
         f = open(fn)
         source = f.read()
         f.close()
-        ver = get_versions(source)
+        ver = get_versions(source, fn)
         if Verbose:
             print(fn)
             for v in sorted([k for k in ver.keys() if k >= MinVersion], reverse=True):
@@ -280,4 +281,4 @@ for fn in files:
         else:
             print("{0}\t{1}".format(".".join(map(str, max(ver.keys()))), fn))
     except SyntaxError as x:
-        pass
+        print("{0}: syntax error compiling with Python {1}: {2}".format(fn, platform.python_version(), x))

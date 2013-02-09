@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import compiler
+import platform
 import sys
 
 StandardModules = {
@@ -360,4 +361,4 @@ for fn in files:
         else:
             print "%s\t%s" % (".".join(map(str, max(ver.keys()))), fn)
     except SyntaxError, x:
-        pass
+        print "%s: syntax error compiling with Python %s: %s" % (fn, platform.python_version(), x)

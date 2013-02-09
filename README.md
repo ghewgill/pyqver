@@ -16,15 +16,13 @@ compiler.
 When run without the `-v` argument, sources are listed along with the minimum
 version of Python required. When run with the `-v` option, each version is
 listed along with the reasons why that version is required. For example, for
-a hypothetical script that uses `collections.defaultdict`:
+the `pyqver2.py` script itself:
 
-    defaultdict.py
-            2.5     collections.defaultdict
-            2.4     collections
+    pyqver2.py
+            2.3     platform
 
-This means that `test.py` uses the `collections` module, which is a 2.4
-feature. In addition, it uses the `collections.defaultdict` function, which is
-a 2.5 feature.
+This means that `pyqver2.py` uses the `platform` module, which is a 2.3
+feature.
 
 The `pyqver2.py` script is specific to Python 2.x, and `pyqver3.py` is specific
 to Python 3.x.
@@ -36,7 +34,7 @@ This script was inspired by the following question on Stack Overflow:
 
 ## REQUIREMENTS
 
-This script requires at least Python 2.2.
+This script requires at least Python 2.3.
 
 ## USAGE
 
