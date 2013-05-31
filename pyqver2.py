@@ -108,6 +108,8 @@ Functions = {
     "os.setresuid":             (2, 7),
     "reversed":                 (2, 4),
     "set":                      (2, 4),
+    "subprocess.check_call":    (2, 5),
+    "subprocess.check_output":  (2, 7),
     "sum":                      (2, 3),
     "symtable.is_declared_global": (2, 7),
     "weakref.WeakSet":          (2, 7),
